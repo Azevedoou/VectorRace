@@ -1,11 +1,67 @@
 import tkinter as tk
+import numpy as np
 import re
 from cartesian_plan import CartesianPlan
 from utils import generate_random_color
+import matplotlib.pyplot as plt
+
 
 
 total_vector = 0
 total_points = 0
+
+def plot_graph():
+    # Definir as funções de acordo com as equações fornecidas
+    def g(x):
+        return np.where((-4.24 <= x) & (x <= -1.29), 0.3 * x**2 - 0.7171357114461 * x - 9.3517145743126, np.nan)
+
+    def h(x):
+        return np.where((-6.85 <= x) & (x <= 1.07), -0.3 * x**2 - 2.420254606549625 * x - 2.5707541879086, np.nan)
+
+    def p(x):
+        return np.where((-10 <= x) & (x <= -4.24), 0.7 * x**2 + 9.8235918524086 * x + 28.1356134992317, np.nan)
+
+    def q(x):
+        return np.where((-10 <= x) & (x <= 10), -0.1 * x**2 + 10, np.nan)
+
+    def q_2(x):
+        x_adj = x + 0.0680917115144
+        return np.where((-6.87 <= x_adj) & (x_adj <= 6.85), -0.1 * x_adj**2 + 4.6845713673334, np.nan)
+
+    def r(x):
+        return np.where((-1.31 <= x) & (x <= 10), (0.5 * (0.73 * (x + 3.3991894174067) + 2.9408717431496) - 3.3609962778853)**2 - 9.1729560397548, np.nan)
+
+    def s(x):
+        return np.where((1.09 <= x) & (x <= 6.85), (0.5 * (0.73 * (x + 4.7359493006565) + 2.9408717431496) - 3.3609962778853)**2 - 5.5446077852195, np.nan)
+
+    # Intervalo de x para o gráfico
+    x = np.linspace(-10, 10, 1000)
+
+    # Criar a figura e os eixos
+    plt.figure(figsize=(10, 6))
+
+    # Plotar as funções dentro dos seus respectivos intervalos
+    plt.plot(x, g(x), label='g(x)', color='blue')
+    plt.plot(x, h(x), label='h(x)', color='green')
+    plt.plot(x, p(x), label='p(x)', color='red')
+    plt.plot(x, q(x), label='q(x)', color='purple')
+    plt.plot(x, q_2(x), label='q_2(x)', color='orange')
+    plt.plot(x, r(x), label='r(x)', color='brown')
+    plt.plot(x, s(x), label='s(x)', color='pink')
+
+    # Adicionar título e rótulos aos eixos
+    plt.title("Gráfico das funções definidas por intervalos")
+    plt.xlabel("x")
+    plt.ylabel("y")
+
+    # Adicionar legenda
+    plt.legend()
+
+    # Mostrar o gráfico
+    plt.grid(True)
+    plt.show()
+
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -39,6 +95,10 @@ class App(tk.Tk):
 
         self.delete_button = tk.Button(self.input_frame, text="Delete Selected Item", command=self.delete_item)
         self.delete_button.pack(pady=10)
+
+        # Button to display the graph
+        self.graph_button = tk.Button(self.input_frame, text="Show Graph", command=plot_graph)
+        self.graph_button.pack(pady=10)
 
         # Create the canvas for the Cartesian plane
         self.cartesian_plane = CartesianPlan(self, self.point_listbox)
